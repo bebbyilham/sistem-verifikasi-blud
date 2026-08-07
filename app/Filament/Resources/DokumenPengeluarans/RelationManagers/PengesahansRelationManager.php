@@ -32,10 +32,10 @@ class PengesahansRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('ppk_id')
             ->columns([
-                Tables\Columns\TextColumn::make('ppk.name')
+                TextColumn::make('ppk.name')
                     ->label('PPK'),
-                Tables\Columns\TextColumn::make('catatan'),
-                Tables\Columns\TextColumn::make('tanggal_sah')
+                TextColumn::make('catatan'),
+                TextColumn::make('tanggal_sah')
                     ->dateTime(),
             ])
             ->filters([

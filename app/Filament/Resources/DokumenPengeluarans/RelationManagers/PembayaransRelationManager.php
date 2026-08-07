@@ -32,14 +32,14 @@ class PembayaransRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('bendahara_id')
             ->columns([
-                Tables\Columns\TextColumn::make('bendahara.name')
+                TextColumn::make('bendahara.name')
                     ->label('Bendahara'),
-                Tables\Columns\TextColumn::make('nomor_spj')
+                TextColumn::make('nomor_spj')
                     ->label('Nomor SPJ'),
-                Tables\Columns\TextColumn::make('status_bayar')
+                TextColumn::make('status_bayar')
                     ->badge()
                     ->color('success'),
-                Tables\Columns\TextColumn::make('tanggal_bayar')
+                TextColumn::make('tanggal_bayar')
                     ->dateTime(),
             ])
             ->filters([

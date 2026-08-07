@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('nominal', 15, 2);
             $table->date('tanggal_ajuan');
             $table->string('status', 30);
-            $table->string('file_path', 255);
+            $table->json('file_path')->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

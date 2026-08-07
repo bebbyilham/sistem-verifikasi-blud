@@ -32,17 +32,17 @@ class VerifikasisRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('verifikator_id')
             ->columns([
-                Tables\Columns\TextColumn::make('verifikator.name')
+                TextColumn::make('verifikator.name')
                     ->label('Verifikator'),
-                Tables\Columns\TextColumn::make('hasil')
+                TextColumn::make('hasil')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'lolos' => 'success',
                         'dikembalikan' => 'danger',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('catatan'),
-                Tables\Columns\TextColumn::make('tanggal_verifikasi')
+                TextColumn::make('catatan'),
+                TextColumn::make('tanggal_verifikasi')
                     ->dateTime(),
             ])
             ->filters([

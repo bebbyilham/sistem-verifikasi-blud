@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\DokumenPengeluarans\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
 
 class DokumenPengeluaranForm
 {
@@ -32,19 +34,39 @@ class DokumenPengeluaranForm
                     ->required(),
                 TextInput::make('nominal')
                     ->required()
-                    ->numeric()
-                    ->prefix('Rp'),
+                    ->prefix('Rp')
+                    ->mask(RawJs::make('$money($input, ",", ".", 0)'))
+                    ->stripCharacters('.')
+                    ->formatStateUsing(fn ($state) => filled($state) ? number_format((float) str_replace('.', '', $state), 0, ',', '.') : null)
+                    ->dehydrateStateUsing(fn ($state) => filled($state) ? str_replace('.', '', $state) : null)
+                    ->numeric(),
                 DatePicker::make('tanggal_ajuan')
                     ->default(now())
                     ->required(),
                 \Filament\Forms\Components\Hidden::make('status')
                     ->default('diajukan'),
-                \Filament\Forms\Components\FileUpload::make('file_path')
+                \Filament\Forms\Components\Repeater::make('file_path')
                     ->label('Dokumen Lampiran (PDF)')
-                    ->disk('local')
-                    ->directory('dokumen_pengeluaran')
-                    ->acceptedFileTypes(['application/pdf'])
-                    ->required(),
+                    ->schema([
+                        TextInput::make('judul')
+                            ->label('Judul / Nama Dokumen')
+                            ->placeholder('Contoh: Kwitansi Pembelian, SPJ Obat, Bukti Transfer')
+                            ->required(),
+                        FileUpload::make('file')
+                            ->label('File PDF')
+                            ->disk('public')
+                            ->directory('dokumen_pengeluaran')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->openable()
+                            ->downloadable()
+                            ->required(),
+                    ])
+                    ->columns(2)
+                    ->addActionLabel('Tambah Dokumen Lampiran')
+                    ->reorderable()
+                    ->collapsible()
+                    ->defaultItems(1)
+                    ->columnSpanFull(),
                 Textarea::make('keterangan')
                     ->columnSpanFull(),
             ]);

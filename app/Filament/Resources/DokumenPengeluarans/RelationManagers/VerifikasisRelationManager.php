@@ -17,6 +17,8 @@ class VerifikasisRelationManager extends RelationManager
 {
     protected static string $relationship = 'verifikasis';
 
+    protected static ?string $title = 'Verifikasi';
+
     public function form(Schema $schema): Schema
     {
         return $schema

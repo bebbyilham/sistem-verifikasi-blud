@@ -1,0 +1,372 @@
+/* ============================================================
+   Glassmorphism Indigo — Custom Theme for Filament Panel
+   Sistem Verifikasi Dokumen BLUD
+   ============================================================ */
+
+/* --- Animated background blobs --- */
+.background-blobs {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    animation: blob-float 20s infinite ease-in-out;
+}
+
+.blob-1 {
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    top: -10%;
+    left: -5%;
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, #a5b4fc, #c7d2fe);
+    top: 50%;
+    right: -10%;
+    animation-delay: -7s;
+}
+
+.blob-3 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    bottom: -5%;
+    left: 30%;
+    animation-delay: -14s;
+}
+
+@keyframes blob-float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(30px, -50px) scale(1.05);
+    }
+    50% {
+        transform: translate(-20px, 30px) scale(0.95);
+    }
+    75% {
+        transform: translate(40px, 20px) scale(1.02);
+    }
+}
+
+/* --- Glassmorphism panel overrides --- */
+.fi-body {
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%) !important;
+}
+
+/* Sidebar glassmorphism */
+.fi-sidebar {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-right: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Top bar glassmorphism */
+.fi-topbar {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.08) !important;
+}
+
+/* Cards / Sections / Tables — NO backdrop-filter on containers to avoid trapping fixed modals */
+.fi-section,
+.fi-wi-stats-overview-stat,
+.fi-ta,
+.fi-ta-ctn {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.06),
+                0 2px 4px -2px rgba(99, 102, 241, 0.04) !important;
+}
+
+/* Widget chart containers */
+.fi-wi-chart {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-radius: 12px !important;
+}
+
+/* Widget full width overrides */
+.fi-wi-account,
+.fi-wi-welcome {
+    grid-column: 1 / -1 !important;
+}
+
+/* ============================================================
+   PITCH.IO STYLE WELCOME WIDGET (Full-Width 100% Banner)
+   ============================================================ */
+/* Target Filament Widget Wrapper to span 100% full grid width */
+.fi-wi-welcome {
+    grid-column: 1 / -1 !important;
+    grid-column-start: 1 !important;
+    grid-column-end: -1 !important;
+    width: 100% !important;
+}
+
+.pitch-welcome-card {
+    position: relative;
+    width: 100% !important;
+    box-sizing: border-box;
+    min-height: 160px;
+    padding: 36px 48px;
+    border-radius: 20px;
+    background: #eae5ff;
+    color: #1a103c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    overflow: visible !important;
+}
+
+.pitch-welcome-left {
+    max-width: 60%;
+    z-index: 2;
+}
+
+.pitch-welcome-title {
+    margin: 0 0 10px 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: #1a103c !important;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.pitch-welcome-subtitle {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    color: #4a3e7a;
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+.pitch-welcome-right {
+    position: absolute;
+    right: 40px;
+    bottom: -15px;
+    height: 195px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.pitch-illustration {
+    height: 195px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 18px rgba(108, 99, 255, 0.12));
+}
+
+.pitch-welcome-card {
+    position: relative;
+    width: 100% !important;
+    box-sizing: border-box;
+    min-height: 150px;
+    padding: 36px 44px;
+    border-radius: 20px;
+    background: #eae5ff;
+    color: #1a103c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    margin-top: 5px;
+    overflow: visible !important;
+}
+
+.pitch-welcome-left {
+    max-width: 58%;
+    z-index: 2;
+}
+
+.pitch-welcome-title {
+    margin: 0 0 8px 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a103c !important;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.pitch-welcome-subtitle {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    color: #4a3e7a;
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+.pitch-welcome-right {
+    position: absolute;
+    right: 35px;
+    bottom: -15px;
+    height: 180px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.pitch-illustration {
+    height: 180px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 18px rgba(108, 99, 255, 0.12));
+}
+
+/* Dark mode support */
+.dark .pitch-welcome-card {
+    background: #231c42;
+    color: #ffffff;
+}
+
+.dark .pitch-welcome-title {
+    color: #ffffff !important;
+}
+
+.dark .pitch-welcome-subtitle {
+    color: #b8b0e0;
+}
+
+/* ============================================================
+   STATS OVERVIEW SEPARATION & CARD SPACING
+   ============================================================ */
+/* Strip outer white section panel from stats overview widget */
+.fi-section:has(.fi-wi-stats-overview-stat),
+.fi-section:has(.fi-wi-stats-overview),
+.fi-wi-stats-overview,
+.fi-wi-stats-overview-stat-ctn,
+.fi-wi-stats-overview > div,
+.fi-wi-stats-overview .fi-section,
+.fi-wi-stats-overview .fi-section-header,
+.fi-wi-stats-overview .fi-section-content {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.fi-wi-stats-overview {
+    display: grid !important;
+    gap: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.fi-wi-stats-overview-stat {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(99, 102, 241, 0.12) !important;
+    background: #ffffff !important;
+    padding: 1.25rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.18), 0 4px 10px -6px rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Login page glassmorphism */
+.fi-simple-layout {
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 50%, #6366f1 100%) !important;
+}
+
+.fi-simple-main-ctn {
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* --- FIX FOR FILAMENT MODAL OVERFLOW & POSITIONING --- */
+.fi-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 9999 !important;
+}
+
+.fi-modal-window {
+    background: #ffffff !important;
+    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+}
+
+/* Navigation items active state */
+.fi-sidebar-item-active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(129, 140, 248, 0.1)) !important;
+    border-left: 3px solid #6366f1 !important;
+}
+
+/* Notification badge pulse */
+.fi-badge[data-color="danger"],
+.fi-badge[data-color="warning"] {
+    animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.75;
+    }
+}
+
+/* --- Dark mode support --- */
+.dark .fi-body {
+    background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%) !important;
+}
+
+.dark .fi-sidebar {
+    background: rgba(30, 27, 75, 0.8) !important;
+    border-right-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+.dark .fi-topbar {
+    background: rgba(30, 27, 75, 0.7) !important;
+    border-bottom-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+.dark .fi-section,
+.dark .fi-wi-stats-overview-stat,
+.dark .fi-ta,
+.dark .fi-ta-ctn,
+.dark .fi-wi-chart {
+    background: rgba(30, 27, 75, 0.85) !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+.dark .blob {
+    opacity: 0.12;
+}
+
+.dark .fi-modal-window {
+    background: #1e1b4b !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+    color: #f3f4f6 !important;
+}

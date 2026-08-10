@@ -41,12 +41,18 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->navigationGroups([
+                'Dokumen',
+                'Master Data',
+                'Monitoring',
+            ])
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                \App\Filament\Widgets\WelcomeWidget::class,
+                \App\Filament\Widgets\StatsOverviewWidget::class,
                 \App\Filament\Widgets\PengeluaranChart::class,
                 \App\Filament\Widgets\DokumenChart::class,
+                \App\Filament\Widgets\KoreksiPerBidangChart::class,
+                \App\Filament\Widgets\WaktuVerifikasiChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

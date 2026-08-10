@@ -17,6 +17,8 @@ class PembayaransRelationManager extends RelationManager
 {
     protected static string $relationship = 'pembayarans';
 
+    protected static ?string $title = 'Pembayaran';
+
     public function form(Schema $schema): Schema
     {
         return $schema

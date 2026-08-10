@@ -20,9 +20,11 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
+    protected static \UnitEnum|string|null $navigationGroup = 'Master Data';
+
     public static function canViewAny(): bool
     {
-        return auth()->user()->hasRole('admin');
+        return auth()->user()?->hasAnyRole(['admin', 'super_admin']);
     }
 
     public static function form(Schema $schema): Schema

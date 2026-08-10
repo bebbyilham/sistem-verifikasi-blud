@@ -291,6 +291,676 @@
     background: linear-gradient(135deg, #312e81 0%, #4338ca 50%, #6366f1 100%) !important;
 }
 
+/* ============================================================
+   SPLIT SCREEN LOGIN PAGE STYLING (Crunchbase Reference & Glassmorphism Indigo)
+   ============================================================ */
+body:has(.split-login-container) {
+    overflow-x: hidden;
+    background: #ffffff !important;
+}
+
+.fi-simple-layout:has(.split-login-container) {
+    background: #ffffff !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+
+.fi-simple-main-ctn:has(.split-login-container) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.split-login-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    background: #ffffff;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+}
+
+/* Left Panel (Form Side) */
+.split-login-left {
+    flex: 1;
+    max-width: 500px;
+    padding: 48px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ffffff;
+    z-index: 10;
+    overflow-y: auto;
+}
+
+@media (min-width: 1280px) {
+    .split-login-left {
+        max-width: 540px;
+        padding: 56px 64px;
+    }
+}
+
+.split-login-form-box {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Brand Header */
+.split-brand-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+}
+
+.split-brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.split-brand-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e1b4b;
+    letter-spacing: -0.01em;
+}
+
+/* Heading Box */
+.split-heading-box {
+    margin-bottom: 24px;
+}
+
+.split-heading-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+}
+
+.split-heading-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Submit Button */
+.split-submit-btn {
+    width: 100%;
+    padding: 13px 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    transition: all 0.2s ease;
+    margin-top: 16px;
+}
+
+.split-submit-btn:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+}
+
+/* Demo Accounts Helper */
+.split-demo-accounts {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.split-demo-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.split-demo-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.split-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.split-chip:hover {
+    background: #4f46e5;
+    color: #ffffff;
+    border-color: #4f46e5;
+}
+
+/* Right Panel (Hero Graphic Side) */
+.split-login-right {
+    flex: 1;
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 50%, #4f46e5 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .split-login-right {
+        display: none;
+    }
+}
+
+.split-hero-glow-top {
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 350px;
+    height: 350px;
+    background: rgba(129, 140, 248, 0.3);
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+.split-hero-glow-bottom {
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 300px;
+    height: 300px;
+    background: rgba(99, 102, 241, 0.25);
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+}
+
+.split-hero-content {
+    max-width: 540px;
+    z-index: 2;
+    color: #ffffff;
+}
+
+.split-hero-pill {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-size: 12px;
+    font-weight: 600;
+    color: #e0e7ff;
+    margin-bottom: 24px;
+}
+
+.split-hero-title {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #ffffff !important;
+    margin: 0 0 16px 0;
+}
+
+.split-hero-subtitle {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #c7d2fe;
+    margin: 0 0 36px 0;
+}
+
+/* Cards Mockup (Glassmorphism Indigo) */
+.split-hero-cards-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.split-hero-card.card-primary {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    color: #1e1b4b;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.split-card-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+}
+
+.split-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.icon-indigo { background: #4f46e5; }
+.icon-emerald { background: #10b981; }
+.icon-purple { background: #8b5cf6; }
+
+.split-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.split-card-info strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.split-card-info span {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.split-card-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.split-card-badge.success { background: #ecfdf5; color: #047857; }
+.split-card-badge.warning { background: #fffbeb; color: #b45309; }
+.split-card-badge.danger  { background: #fef2f2; color: #b91c1c; }
+.split-card-badge.info     { background: #eff6ff; color: #1d4ed8; }
+
+.split-hero-card.card-floating {
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    width: 260px;
+    background: rgba(30, 27, 75, 0.85);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 18px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+}
+
+.split-float-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.split-float-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a5b4fc;
+}
+
+.split-float-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.split-float-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.split-float-grid {
+    display: flex;
+    justify-content: space-between;
+}
+
+.split-float-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.split-float-stat small {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.split-float-stat strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* ============================================================
+   APPLICATION DASHBOARD WINDOW SHOWCASE (Login Page)
+   ============================================================ */
+.app-dashboard-window {
+    width: 100%;
+    max-width: 580px;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2);
+    transform: perspective(1000px) rotateY(-3deg) rotateX(2deg);
+    transition: transform 0.4s ease;
+}
+
+.app-dashboard-window:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+}
+
+.app-window-bar {
+    height: 36px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 12px;
+}
+
+.app-window-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.app-window-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-red { background: #ff5f56; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #27c93f; }
+
+.app-window-url {
+    flex: 1;
+    max-width: 240px;
+    height: 22px;
+    background: #ffffff;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 6px;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.app-window-body {
+    padding: 16px;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.app-dasbor-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: -4px;
+}
+
+/* App Filter Bar Mockup */
+.app-filter-bar {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 9px;
+}
+
+.app-filter-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.app-filter-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.app-filter-input {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: #334155;
+}
+
+.app-filter-input span {
+    color: #64748b;
+}
+
+/* App Welcome Card Widget (Exact 1:1 Replica of welcome-widget.blade.php) */
+.mini-welcome.pitch-welcome-card {
+    min-height: 90px !important;
+    padding: 14px 18px !important;
+    border-radius: 14px !important;
+    background: #eae5ff !important;
+    color: #1a103c !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.mini-welcome .pitch-welcome-left {
+    max-width: 65% !important;
+    z-index: 2 !important;
+}
+
+.mini-welcome .pitch-welcome-title {
+    margin: 0 0 4px 0 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #1a103c !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em !important;
+}
+
+.mini-welcome .pitch-welcome-subtitle {
+    margin: 0 !important;
+    font-family: ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 10px !important;
+    color: #4a3e7a !important;
+    font-weight: 400 !important;
+    line-height: 1.35 !important;
+}
+
+.mini-welcome .pitch-welcome-right {
+    position: absolute !important;
+    right: 15px !important;
+    bottom: -12px !important;
+    height: 95px !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+}
+
+.mini-welcome .pitch-illustration {
+    height: 95px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 6px 10px rgba(108, 99, 255, 0.12)) !important;
+}
+
+/* Stat Cards Grid (3 Columns) */
+.app-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.app-stat-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.app-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.app-stat-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+}
+
+.app-stat-sub {
+    font-size: 8px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.text-blue { color: #2563eb; }
+.text-orange { color: #d97706; }
+.text-red { color: #dc2626; }
+.text-green { color: #16a34a; }
+.text-emerald { color: #059669; }
+.text-gray { color: #4b5563; }
+
+/* Charts Grid */
+.app-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.app-chart-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.app-chart-title {
+    font-size: 9px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.app-bar-chart-preview {
+    height: 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding-top: 4px;
+}
+
+.app-bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.app-bar-col span {
+    width: 12px;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 2px;
+}
+
+.app-bar-col.bar-active span {
+    background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.app-bar-col small, .app-line-dates span {
+    font-size: 7px;
+    color: #94a3b8;
+}
+
+.app-line-chart-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.app-line-svg {
+    width: 100%;
+    height: 26px;
+}
+
+.app-line-dates {
+    display: flex;
+    justify-content: space-between;
+}
+
 .fi-simple-main-ctn {
     background: rgba(255, 255, 255, 0.12) !important;
     backdrop-filter: blur(24px) saturate(180%) !important;
@@ -370,3 +1040,104 @@
     border-color: rgba(99, 102, 241, 0.2) !important;
     color: #f3f4f6 !important;
 }
+
+/* ============================================================
+   PERIOD FILTER TOOLBAR (Modern Control Pills)
+   ============================================================ */
+.period-filter-toolbar-container {
+    width: 100%;
+    margin: 4px 0 16px 0;
+}
+
+.period-filter-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 4px 0;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.dark .period-filter-toolbar {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.period-filter-pill-group {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    gap: 3px;
+}
+
+.dark .period-filter-pill-group {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.period-filter-pill-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .period-filter-pill-btn {
+    color: #94a3b8;
+}
+
+.period-filter-pill-btn:hover {
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.dark .period-filter-pill-btn:hover {
+    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.period-filter-pill-btn.active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.dark .period-filter-pill-btn.active {
+    background: #312e81 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.period-filter-custom-panel {
+    margin-top: 10px;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.08);
+}
+
+.dark .period-filter-custom-panel {
+    background: rgba(30, 27, 75, 0.95);
+    border-color: rgba(99, 102, 241, 0.25);
+}
+

@@ -6,7 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Filament\Pages\Auth\Login::class)
             ->brandName('Sistem Verifikasi BLUD')
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
@@ -47,7 +47,6 @@ class AdminPanelProvider extends PanelProvider
                 'Monitoring',
             ])
             ->widgets([
-                \App\Filament\Widgets\WelcomeWidget::class,
                 \App\Filament\Widgets\StatsOverviewWidget::class,
                 \App\Filament\Widgets\PengeluaranChart::class,
                 \App\Filament\Widgets\DokumenChart::class,

@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagram Sistem Verifikasi BLUD</title>
+  <meta name="description" content="UML, Sequence, State, ERD, DFD Level 0 dan Level 1 — Sistem Verifikasi Dokumen Pengeluaran BLUD (Laravel + Filament)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- ──────────────────────────────────────────────── -->
+  <!-- Diagram sources stored safely as JS strings     -->
+  <!-- No HTML entity conflict possible                -->
+  <!-- ──────────────────────────────────────────────── -->
+  <script id="src-uml" type="text/x-mermaid">
+classDiagram
+  direction TB
+
+  class User {
+    +int id
+    +string name
+    +string email
+    +string password
+    +int bidang_id
+    +bool status_aktif
+    +canAccessPanel(Panel) bool
+    +bidang() BelongsTo
+    +dokumenPengeluaran() HasMany
+    +hasRole(role) bool
+  }
+
+  class Bidang {
+    +int id
+    +string nama_bidang
+    +string pptk_penanggung_jawab
+    +users() HasMany
+    +dokumenPengeluaran() HasMany
+  }
+
+  class DokumenPengeluaran {
+    +int id
+    +string kode_dokumen
+    +int bidang_id
+    +int pptk_id
+    +string jenis_dokumen
+    +enum sumber_dana
+    +decimal nominal
+    +date tanggal_ajuan
+    +string status
+    +json file_path
+    +text keterangan
+    +STATUS_DIAJUKAN = diajukan
+    +STATUS_DIVERIFIKASI = diverifikasi
+    +STATUS_DIKEMBALIKAN = dikembalikan
+    +STATUS_DISAHKAN = disahkan
+    +STATUS_DIBAYAR = dibayar
+    +STATUS_DIARSIPKAN = diarsipkan
+    +bidang() BelongsTo
+    +pptk() BelongsTo
+    +verifikasis() HasMany
+    +riwayatKoreksis() HasMany
+    +pengesahans() HasMany
+    +pembayarans() HasMany
+    +auditTrails() HasMany
+  }
+
+  class Verifikasi {
+    +int id
+    +int dokumen_id
+    +int verifikator_id
+    +enum hasil
+    +datetime tanggal_verifikasi
+    +text catatan
+    +dokumenPengeluaran() BelongsTo
+    +verifikator() BelongsTo
+  }
+
+  class RiwayatKoreksi {
+    +int id
+    +int dokumen_id
+    +int versi_ke
+    +int jenis_kesalahan_id
+    +text catatan_koreksi
+    +datetime tanggal_koreksi
+    +int dikoreksi_oleh
+    +dokumenPengeluaran() BelongsTo
+    +jenisKesalahan() BelongsTo
+    +pengoreksi() BelongsTo
+  }
+
+  class JenisKesalahan {
+    +int id
+    +string nama
+    +riwayatKoreksi() HasMany
+  }
+
+  class Pengesahan {
+    +int id
+    +int dokumen_id
+    +int ppk_id
+    +datetime tanggal_sah
+    +text catatan
+    +dokumenPengeluaran() BelongsTo
+    +ppk() BelongsTo
+  }
+
+  class Pembayaran {
+    +int id
+    +int dokumen_id
+    +int bendahara_id
+    +datetime tanggal_bayar
+    +string nomor_spj
+    +string status_bayar
+    +dokumenPengeluaran() BelongsTo
+    +bendahara() BelongsTo
+  }
+
+  class AuditTrail {
+    +int id
+    +int user_id
+    +string aksi
+    +string tabel_terdampak
+    +int id_data_terdampak
+    +datetime waktu
+    +string ip_address
+    +user() BelongsTo
+  }
+
+  class JenisDokumen {
+    +int id
+    +string nama
+  }
+
+  class Role {
+    +super_admin
+    +admin
+    +pptk
+    +verifikator
+    +ppk
+    +bendahara
+    +manajemen
+    +rekanan
+  }
+
+  Bidang "1" --> "*" User : memiliki anggota
+  Bidang "1" --> "*" DokumenPengeluaran : menaungi
+  User "1" --> "*" DokumenPengeluaran : mengajukan sbg PPTK
+  DokumenPengeluaran "1" --> "*" Verifikasi : diperiksa via
+  DokumenPengeluaran "1" --> "*" RiwayatKoreksi : dicatat di
+  DokumenPengeluaran "1" --> "*" Pengesahan : disahkan via
+  DokumenPengeluaran "1" --> "*" Pembayaran : dibayar via
+  DokumenPengeluaran "1" --> "*" AuditTrail : direkam di
+  RiwayatKoreksi "*" --> "1" JenisKesalahan : dikategorikan
+  User "*" --> "1" Role : memiliki peran
+  User "1" --> "*" Verifikasi : melakukan sbg Verifikator
+  User "1" --> "*" Pengesahan : menyahkan sbg PPK
+  User "1" --> "*" Pembayaran : memproses sbg Bendahara
+  User "1" --> "*" AuditTrail : tercatat di
+  </script>
+
+  <script id="src-seq" type="text/x-mermaid">
+sequenceDiagram
+  autonumber
+  actor PPTK as PPTK
+  actor Verifikator as Verifikator
+  actor PPK as PPK
+  actor Bendahara as Bendahara
+  actor Admin as Admin / SuperAdmin
+  actor Manajemen as Manajemen
+  participant Filament as Filament Panel
+  participant Model as DokumenPengeluaran
+  participant Observer as AuditTrailObserver
+  participant DB as Database
+  participant Notif as Notifikasi
+
+  rect rgb(20, 50, 80)
+    Note over PPTK, DB: FASE 1 — Pengajuan Dokumen oleh PPTK
+    PPTK->>Filament: Login & buka form Dokumen Pengeluaran
+    Filament->>Filament: Cek canCreate — hasRole pptk
+    PPTK->>Filament: Isi form (bidang, jenis, nominal, tanggal, file)
+    PPTK->>Filament: Submit pengajuan
+    Filament->>Model: create(data)
+    Model->>Model: booted::creating() — auto-generate kode_dokumen BLUD-YYYY-MM-XXXX
+    Model->>DB: INSERT dokumen_pengeluarans status = diajukan
+    DB-->>Model: ID dokumen tersimpan
+    Model->>Observer: created(dokumen) — AuditTrailObserver
+    Observer->>DB: INSERT audit_trails aksi = Dokumen Diajukan
+    Model->>Notif: booted::created() — kirim notif ke verifikator
+    Notif->>DB: INSERT notifications Filament DB Notification
+    Notif-->>Verifikator: Dokumen BLUD-XXXX telah diajukan
+    Filament-->>PPTK: Redirect ke halaman detail dokumen
+  end
+
+  rect rgb(20, 80, 50)
+    Note over Verifikator, DB: FASE 2 — Proses Verifikasi
+    Verifikator->>Filament: Buka notifikasi dan lihat dokumen
+    Filament->>DB: Query DokumenPengeluaran + relasi
+    DB-->>Filament: Data dokumen dan file lampiran
+    Filament-->>Verifikator: Tampilkan detail dokumen dan timeline status
+
+    alt Dokumen Lolos Verifikasi
+      Verifikator->>Filament: Tambah record Verifikasi hasil = lolos
+      Filament->>DB: INSERT verifikasis hasil=lolos, tanggal_verifikasi
+      Verifikator->>Filament: Update status dokumen ke diverifikasi
+      Filament->>Model: update status = diverifikasi
+      Model->>Observer: updated dokumen — catat perubahan status
+      Observer->>DB: INSERT audit_trails aksi = diajukan ke diverifikasi
+      DB-->>Filament: Status berhasil diperbarui
+      Filament-->>PPK: Notif dokumen siap disahkan
+    else Dokumen Dikembalikan
+      Verifikator->>Filament: Tambah record Verifikasi hasil = dikembalikan
+      Filament->>DB: INSERT verifikasis hasil=dikembalikan, catatan
+      Verifikator->>Filament: Tambah RiwayatKoreksi jenis_kesalahan, catatan
+      Filament->>DB: INSERT riwayat_koreksis versi_ke, catatan_koreksi
+      Verifikator->>Filament: Update status ke dikembalikan
+      Filament->>Model: update status = dikembalikan
+      Model->>Observer: updated — catat audit
+      Observer->>DB: INSERT audit_trails aksi = diajukan ke dikembalikan
+      Filament-->>PPTK: Notif dokumen dikembalikan untuk revisi
+      PPTK->>Filament: Edit dan perbaiki dokumen, submit ulang
+      Filament->>Model: update data + status = diajukan
+      Model->>Observer: updated — catat revisi ulang
+    end
+  end
+
+  rect rgb(70, 30, 70)
+    Note over PPK, DB: FASE 3 — Pengesahan oleh PPK
+    PPK->>Filament: Buka dokumen berstatus diverifikasi
+    Filament-->>PPK: Tampilkan detail dokumen + tab Pengesahan
+    PPK->>Filament: Tambah record Pengesahan catatan, tanggal_sah
+    Filament->>DB: INSERT pengesahans ppk_id, tanggal_sah, catatan
+    PPK->>Filament: Update status dokumen ke disahkan
+    Filament->>Model: update status = disahkan
+    Model->>Observer: updated — catat pengesahan
+    Observer->>DB: INSERT audit_trails aksi = diverifikasi ke disahkan
+    Filament-->>Bendahara: Notif dokumen siap dibayar
+  end
+
+  rect rgb(80, 60, 20)
+    Note over Bendahara, DB: FASE 4 — Pembayaran oleh Bendahara
+    Bendahara->>Filament: Buka dokumen berstatus disahkan
+    Filament-->>Bendahara: Tampilkan detail + tab Pembayaran
+    Bendahara->>Filament: Input nomor_spj, tanggal_bayar, status_bayar
+    Filament->>DB: INSERT pembayarans bendahara_id, nomor_spj
+    Bendahara->>Filament: Update status dokumen ke dibayar
+    Filament->>Model: update status = dibayar
+    Model->>Observer: updated — catat pembayaran
+    Observer->>DB: INSERT audit_trails aksi = disahkan ke dibayar
+    DB-->>Filament: Pembayaran tercatat
+  end
+
+  rect rgb(30, 70, 70)
+    Note over Admin, DB: FASE 5 — Pengarsipan oleh Admin / Super Admin
+    Note right of Admin: Role admin dan super_admin
+    Note right of Admin: memiliki akses penuh
+    Note right of Admin: termasuk trigger pengarsipan
+    Admin->>Filament: Buka dokumen berstatus dibayar
+    Filament->>Model: update status = diarsipkan
+    Model->>Observer: updated — catat pengarsipan
+    Observer->>DB: INSERT audit_trails aksi = dibayar ke diarsipkan
+    DB-->>Filament: Dokumen diarsipkan
+    Filament-->>PPTK: Status akhir DIARSIPKAN
+  end
+
+  rect rgb(30, 40, 60)
+    Note over Manajemen, DB: AKSES READ-ONLY — Manajemen & Rekanan
+    Note right of Manajemen: Role manajemen dapat melihat
+    Note right of Manajemen: semua dokumen, audit trail,
+    Note right of Manajemen: dan seluruh dashboard chart
+    Manajemen->>Filament: Buka dashboard laporan
+    Filament->>DB: Query dokumen + audit_trails + charts
+    DB-->>Filament: Data statistik & riwayat aktivitas
+    Filament-->>Manajemen: Tampilkan dashboard + semua chart
+  end
+  </script>
+
+  <script id="src-state" type="text/x-mermaid">
+stateDiagram-v2
+  [*] --> diajukan : PPTK submit dokumen\nauto-generate kode BLUD
+
+  diajukan --> diverifikasi : Verifikator hasil = lolos\nINSERT verifikasis
+  diajukan --> dikembalikan : Verifikator hasil = dikembalikan\nINSERT riwayat_koreksis
+
+  dikembalikan --> diajukan : PPTK revisi dan submit ulang\nversi_ke bertambah
+
+  diverifikasi --> disahkan : PPK menyahkan\nINSERT pengesahans
+
+  disahkan --> dibayar : Bendahara memproses\nINSERT pembayarans
+
+  dibayar --> diarsipkan : Admin / Super Admin\nPengarsipan digital
+
+  diarsipkan --> [*]
+
+  diajukan --> dibatalkan : Admin / Super Admin\nBatalkan dokumen
+  diverifikasi --> dibatalkan : Admin / Super Admin\nBatalkan dokumen
+  dibatalkan --> [*]
+
+  note right of dikembalikan
+    RiwayatKoreksi dicatat
+    jenis_kesalahan_id
+    catatan_koreksi
+    versi_ke incremental
+    dikoreksi_oleh (verifikator_id)
+  end note
+
+  note right of diajukan
+    AuditTrailObserver
+    mencatat setiap
+    perubahan status
+    oleh semua role
+  end note
+
+  note right of diarsipkan
+    Role read-only tidak
+    mengubah status
+    manajemen — lihat semua
+    rekanan — lihat dokumen
+  end note
+  </script>
+
+  <script id="src-erd" type="text/x-mermaid">
+erDiagram
+  users {
+    bigint id PK
+    string name
+    string email
+    string password
+    bigint bidang_id FK
+    boolean status_aktif
+  }
+  bidangs {
+    bigint id PK
+    string nama_bidang
+    string pptk_penanggung_jawab
+  }
+  dokumen_pengeluarans {
+    bigint id PK
+    string kode_dokumen UK
+    bigint bidang_id FK
+    bigint pptk_id FK
+    string jenis_dokumen
+    enum sumber_dana
+    decimal nominal
+    date tanggal_ajuan
+    string status
+    json file_path
+    text keterangan
+  }
+  verifikasis {
+    bigint id PK
+    bigint dokumen_id FK
+    bigint verifikator_id FK
+    enum hasil
+    datetime tanggal_verifikasi
+    text catatan
+  }
+  riwayat_koreksis {
+    bigint id PK
+    bigint dokumen_id FK
+    int versi_ke
+    bigint jenis_kesalahan_id FK
+    text catatan_koreksi
+    datetime tanggal_koreksi
+    bigint dikoreksi_oleh FK
+  }
+  jenis_kesalahans {
+    bigint id PK
+    string nama
+  }
+  pengesahans {
+    bigint id PK
+    bigint dokumen_id FK
+    bigint ppk_id FK
+    datetime tanggal_sah
+    text catatan
+  }
+  pembayarans {
+    bigint id PK
+    bigint dokumen_id FK
+    bigint bendahara_id FK
+    datetime tanggal_bayar
+    string nomor_spj
+    string status_bayar
+  }
+  audit_trails {
+    bigint id PK
+    bigint user_id FK
+    string aksi
+    string tabel_terdampak
+    bigint id_data_terdampak
+    datetime waktu
+    string ip_address
+  }
+  jenis_dokumens {
+    bigint id PK
+    string nama
+  }
+
+  bidangs ||--o{ users : "memiliki anggota"
+  bidangs ||--o{ dokumen_pengeluarans : "menaungi"
+  users ||--o{ dokumen_pengeluarans : "mengajukan pptk_id"
+  dokumen_pengeluarans ||--o{ verifikasis : "diperiksa"
+  dokumen_pengeluarans ||--o{ riwayat_koreksis : "dikoreksi"
+  dokumen_pengeluarans ||--o{ pengesahans : "disahkan"
+  dokumen_pengeluarans ||--o{ pembayarans : "dibayar"
+  dokumen_pengeluarans ||--o{ audit_trails : "diaudit"
+  jenis_kesalahans ||--o{ riwayat_koreksis : "dikategorikan"
+  users ||--o{ verifikasis : "melakukan verifikator_id"
+  users ||--o{ pengesahans : "menyahkan ppk_id"
+  users ||--o{ pembayarans : "memproses bendahara_id"
+  users ||--o{ riwayat_koreksis : "mengoreksi dikoreksi_oleh"
+  users ||--o{ audit_trails : "tercatat"
+  </script>
+
+  <script id="src-dfd0" type="text/x-mermaid">
+flowchart TB
+  PPTK(["PPTK\nPengelola Kegiatan"])
+  VRK(["Verifikator\nPemeriksa Dokumen"])
+  PPK(["PPK\nPejabat Pembuat Komitmen"])
+  BND(["Bendahara\nPemroses Pembayaran"])
+  SADM(["Super Admin / Admin\nPengelola Sistem"])
+  MNJ(["Manajemen\nMonitoring & Laporan"])
+  RKN(["Rekanan\nMitra Kerja"])
+
+  SYS{{"SISTEM VERIFIKASI BLUD\nPengelolaan & Verifikasi\nDokumen Pengeluaran"}}
+
+  PPTK -- "Data Dokumen Pengeluaran\nform, lampiran, nominal" --> SYS
+  VRK  -- "Hasil Verifikasi\nlolos / dikembalikan + catatan" --> SYS
+  VRK  -- "Data Koreksi\njenis kesalahan, catatan" --> SYS
+  PPK  -- "Keputusan Pengesahan\ncatatan, tanggal sah" --> SYS
+  BND  -- "Data Pembayaran\nnomor SPJ, tanggal bayar" --> SYS
+  SADM -- "Data Master\nuser, bidang, jenis dokumen, peran" --> SYS
+  SADM -- "Trigger Pengarsipan" --> SYS
+  MNJ  -- "Akses Monitoring" --> SYS
+  RKN  -- "Akses Dokumen Terkait" --> SYS
+
+  SYS -- "Notifikasi Dokumen Baru" --> VRK
+  SYS -- "Status dan Riwayat Dokumen" --> PPTK
+  SYS -- "Notifikasi Siap Disahkan" --> PPK
+  SYS -- "Notifikasi Siap Dibayar" --> BND
+  SYS -- "Log Aktivitas & Audit Trail\n+ Semua Chart Dashboard" --> MNJ
+  SYS -- "Laporan Sistem & Kelola Permission" --> SADM
+  SYS -- "View Dokumen Pengeluaran" --> RKN
+
+  style SYS  fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-weight:bold
+  style PPTK fill:#064e3b,stroke:#10b981,color:#fff
+  style VRK  fill:#4c1d95,stroke:#8b5cf6,color:#fff
+  style PPK  fill:#7c2d12,stroke:#f97316,color:#fff
+  style BND  fill:#1e3a5f,stroke:#60a5fa,color:#fff
+  style SADM fill:#374151,stroke:#9ca3af,color:#fff
+  style MNJ  fill:#78350f,stroke:#f59e0b,color:#fff
+  style RKN  fill:#1f2937,stroke:#6b7280,color:#fff
+  </script>
+
+  <script id="src-dfd1" type="text/x-mermaid">
+flowchart TD
+  PPTK(["PPTK"])
+  VRK(["Verifikator"])
+  PPK(["PPK"])
+  BND(["Bendahara"])
+  SADM(["Super Admin / Admin"])
+  MNJ(["Manajemen"])
+  RKN(["Rekanan"])
+
+  DS1[("D1\ndokumen_pengeluarans")]
+  DS2[("D2\nverifikasis")]
+  DS3[("D3\nriwayat_koreksis")]
+  DS4[("D4\npengesahans")]
+  DS5[("D5\npembayarans")]
+  DS6[("D6\naudit_trails")]
+  DS7[("D7\nnotifications")]
+  DS8[("D8\nbidangs & jenis_dokumens")]
+  DS9[("D9\nusers & roles")]
+
+  P1{{"1.0\nPengajuan Dokumen"}}
+  P2{{"2.0\nVerifikasi Dokumen"}}
+  P3{{"3.0\nPengesahan Dokumen"}}
+  P4{{"4.0\nPembayaran SPJ"}}
+  P5{{"5.0\nPengarsipan"}}
+  P6{{"6.0\nPencatatan Audit Trail"}}
+  P7{{"7.0\nPengiriman Notifikasi"}}
+  P8{{"8.0\nManajemen Data Master"}}
+
+  PPTK -- "Data form dokumen\nbidang, nominal, jenis,\ntanggal, file lampiran" --> P1
+  P1 -- "Baca referensi bidang" --> DS8
+  DS8 -- "Daftar bidang dan jenis dokumen" --> P1
+  P1 -- "Simpan dokumen\nstatus diajukan" --> DS1
+  DS1 -- "ID dokumen tersimpan" --> P1
+  P1 -- "Trigger audit created" --> P6
+  P1 -- "Trigger notif ke verifikator" --> P7
+  P1 -- "Konfirmasi pengajuan" --> PPTK
+
+  P7 -- "Baca daftar verifikator" --> DS9
+  DS9 -- "Data user verifikator" --> P7
+  P7 -- "Simpan notifikasi DB" --> DS7
+  DS7 -- "Notif Dokumen baru diajukan" --> VRK
+  DS7 -- "Notif Siap disahkan" --> PPK
+  DS7 -- "Notif Siap dibayar" --> BND
+
+  VRK -- "Buka dan review dokumen" --> P2
+  P2 -- "Baca data dokumen" --> DS1
+  DS1 -- "Detail dokumen dan lampiran" --> P2
+  P2 -- "Simpan hasil verifikasi\nlolos atau dikembalikan" --> DS2
+  P2 -- "Simpan riwayat koreksi\njenis_kesalahan, versi_ke" --> DS3
+  P2 -- "Update status dokumen" --> DS1
+  P2 -- "Trigger audit updated" --> P6
+  P2 -- "Hasil verifikasi" --> VRK
+  P2 -- "Notif revisi" --> P7
+  DS1 -- "Status dikembalikan" --> PPTK
+  PPTK -- "Upload revisi dokumen" --> P2
+
+  PPK -- "Keputusan pengesahan" --> P3
+  P3 -- "Baca dokumen diverifikasi" --> DS1
+  DS1 -- "Data dokumen" --> P3
+  P3 -- "Simpan pengesahan\nppk_id, tanggal_sah" --> DS4
+  P3 -- "Update status ke disahkan" --> DS1
+  P3 -- "Trigger audit updated" --> P6
+  P3 -- "Notif ke bendahara" --> P7
+
+  BND -- "Data pembayaran nomor SPJ" --> P4
+  P4 -- "Baca dokumen disahkan" --> DS1
+  DS1 -- "Data dokumen" --> P4
+  P4 -- "Simpan pembayaran\nbendahara_id, nomor_spj" --> DS5
+  P4 -- "Update status ke dibayar" --> DS1
+  P4 -- "Trigger audit updated" --> P6
+  P4 -- "Bukti pembayaran" --> BND
+
+  SADM -- "Trigger pengarsipan" --> P5
+  P5 -- "Baca dokumen dibayar" --> DS1
+  DS1 -- "Dokumen selesai bayar" --> P5
+  P5 -- "Update status ke diarsipkan" --> DS1
+  P5 -- "Trigger audit updated" --> P6
+
+  P6 -- "Simpan log aksi\nuser_id, aksi, ip, waktu" --> DS6
+  DS6 -- "Riwayat aktivitas" --> SADM
+  DS6 -- "Laporan audit trail\n& semua chart" --> MNJ
+
+  SADM -- "Kelola user dan peran" --> P8
+  SADM -- "Kelola bidang dan jenis dokumen" --> P8
+  P8 -- "Simpan update data master" --> DS9
+  P8 -- "Simpan update data referensi" --> DS8
+
+  MNJ -- "Monitoring dokumen" --> DS1
+  DS1 -- "Data semua dokumen" --> MNJ
+
+  RKN -- "Akses dokumen terkait" --> DS1
+  DS1 -- "Data dokumen read-only" --> RKN
+
+  style P1 fill:#1e3a5f,stroke:#3b82f6,color:#fff
+  style P2 fill:#4c1d95,stroke:#8b5cf6,color:#fff
+  style P3 fill:#7c2d12,stroke:#f97316,color:#fff
+  style P4 fill:#064e3b,stroke:#10b981,color:#fff
+  style P5 fill:#374151,stroke:#9ca3af,color:#fff
+  style P6 fill:#78350f,stroke:#f59e0b,color:#fff
+  style P7 fill:#1e3a5f,stroke:#60a5fa,color:#fff
+  style P8 fill:#1f2937,stroke:#6b7280,color:#fff
+
+  style DS1 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS2 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS3 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS4 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS5 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS6 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS7 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS8 fill:#0f172a,stroke:#475569,color:#94a3b8
+  style DS9 fill:#0f172a,stroke:#475569,color:#94a3b8
+
+  style PPTK fill:#064e3b,stroke:#10b981,color:#fff
+  style VRK  fill:#4c1d95,stroke:#8b5cf6,color:#fff
+  style PPK  fill:#7c2d12,stroke:#f97316,color:#fff
+  style BND  fill:#1e3a5f,stroke:#60a5fa,color:#fff
+  style SADM fill:#374151,stroke:#9ca3af,color:#fff
+  style MNJ  fill:#78350f,stroke:#f59e0b,color:#fff
+  style RKN  fill:#1f2937,stroke:#6b7280,color:#fff
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root, [data-theme="dark"] {
+      --bg-base:       #020817;
+      --bg-surface:    #0f172a;
+      --bg-card:       #1e293b;
+      --border:        #334155;
+      --border-light:  #475569;
+      --text-primary:  #f1f5f9;
+      --text-muted:    #94a3b8;
+      --text-dim:      #64748b;
+      --accent-blue:   #3b82f6;
+      --accent-violet: #8b5cf6;
+      --accent-emerald:#10b981;
+      --accent-orange: #f97316;
+      --accent-amber:  #f59e0b;
+      --accent-sky:    #38bdf8;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --heading-gradient: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 60%, #3b82f6 100%);
+      --legend-bg: rgba(15,23,42,0.6);
+      --card-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-base:       #f8fafc;
+      --bg-surface:    #ffffff;
+      --bg-card:       #ffffff;
+      --border:        #e2e8f0;
+      --border-light:  #cbd5e1;
+      --text-primary:  #0f172a;
+      --text-muted:    #475569;
+      --text-dim:      #64748b;
+      --accent-blue:   #2563eb;
+      --accent-violet: #7c3aed;
+      --accent-emerald:#059669;
+      --accent-orange: #ea580c;
+      --accent-amber:  #d97706;
+      --accent-sky:    #0284c7;
+      --heading-gradient: linear-gradient(135deg, #0f172a 0%, #334155 60%, #2563eb 100%);
+      --legend-bg: rgba(241,245,249,0.9);
+      --card-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); background: var(--bg-base); color: var(--text-primary); min-height: 100vh; transition: background 0.3s, color 0.3s; }
+    body::after {
+      content: '';
+      position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.05) 0%, transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+    .wrapper { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* Header & Top Bar */
+    .site-header { padding: 40px 0 48px; text-align: center; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
+    .header-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 999px; padding: 6px 16px; font-size: 12px; font-weight: 600;
+      color: var(--accent-sky); letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .header-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--accent-sky);
+      animation: blink 1.6s ease-in-out infinite;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px;
+      border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-primary); font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.25s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .theme-toggle-btn:hover { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(59,130,246,0.2); }
+    [data-theme="light"] .theme-icon-dark { display: none; }
+    [data-theme="light"] .theme-icon-light { display: inline-flex; align-items: center; gap: 6px; }
+    [data-theme="dark"] .theme-icon-light, :root:not([data-theme]) .theme-icon-light { display: none; }
+    [data-theme="dark"] .theme-icon-dark, :root:not([data-theme]) .theme-icon-dark { display: inline-flex; align-items: center; gap: 6px; }
+
+    .site-header h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.15;
+      background: var(--heading-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 16px;
+    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+    .site-header h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.15;
+      background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 60%, #3b82f6 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 16px;
+    }
+    .site-header > p { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 36px; }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 40px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.2s;
+    }
+    .stat-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+    .stat-icon { font-size: 20px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0; }
+    .stat-info .num { font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); line-height: 1; }
+    .stat-info .lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Tabs */
+    .tab-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 48px; }
+    .tab-btn {
+      display: flex; align-items: center; gap: 8px; padding: 10px 20px;
+      border-radius: 12px; border: 1px solid var(--border); background: var(--bg-surface);
+      color: var(--text-muted); font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .tab-btn:hover { border-color: var(--border-light); color: var(--text-primary); background: var(--bg-card); }
+    .tab-btn.active { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.5); color: var(--accent-sky); box-shadow: 0 0 24px rgba(59,130,246,0.2); }
+    .tab-btn .num { font-size: 10px; font-weight: 700; font-family: var(--font-mono); background: rgba(255,255,255,0.08); border-radius: 4px; padding: 1px 5px; }
+
+    /* Sections */
+    .diagram-section { margin-bottom: 48px; animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .section-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .section-number { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 8px; font-size: 13px; font-weight: 800; font-family: var(--font-mono); flex-shrink: 0; }
+    .section-meta h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 4px; }
+    .section-meta p { font-size: 0.875rem; color: var(--text-muted); }
+    code { font-family: var(--font-mono); font-size: 12px; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; }
+
+    /* Card */
+    .diagram-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: border-color 0.25s, box-shadow 0.25s, background 0.3s; }
+    .diagram-card:hover { border-color: var(--border-light); box-shadow: var(--card-shadow); }
+    .card-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--bg-surface); }
+    .toolbar-dots { display: flex; gap: 6px; }
+    .toolbar-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ef4444; } .dot-yellow { background: #eab308; } .dot-green { background: #22c55e; }
+    .toolbar-label { font-size: 11px; font-weight: 600; font-family: var(--font-mono); color: var(--text-dim); letter-spacing: 0.05em; text-transform: uppercase; }
+    .btn-copy { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-family: var(--font-sans); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-copy:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .btn-copy.copied { border-color: var(--accent-emerald); color: var(--accent-emerald); }
+
+    /* Mermaid container */
+    .mermaid-wrap { padding: 32px 24px; overflow-x: auto; background: var(--bg-surface); min-height: 120px; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
+    .mermaid-wrap > div { width: 100%; display: flex; justify-content: center; }
+    .mermaid-wrap svg { max-width: 100%; height: auto; }
+
+    /* Loading state */
+    .loading-text { color: var(--text-dim); font-size: 13px; display: flex; align-items: center; gap: 10px; }
+    .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent-blue); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Legend */
+    .legend-strip { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 20px; border-top: 1px solid var(--border); background: var(--legend-bg); }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+    /* Divider */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 56px 0; }
+
+    /* Footer */
+    .site-footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 12px; }
+    .site-footer a { color: var(--accent-sky); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+    @media (max-width: 640px) { .wrapper { padding: 0 16px 60px; } .mermaid-wrap { padding: 20px 12px; } }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="top-bar">
+      <div class="header-badge"><span class="dot"></span>Sistem Verifikasi BLUD · Laravel + Filament</div>
+      <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()" title="Ganti Tema">
+        <span class="theme-icon-dark">🌙 Mode Gelap</span>
+        <span class="theme-icon-light">☀️ Mode Terang</span>
+      </button>
+    </div>
+    <h1>Diagram Arsitektur Sistem</h1>
+    <p>Visualisasi lengkap UML, Sequence, State, ERD, dan DFD untuk alur verifikasi dokumen pengeluaran BLUD.</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(59,130,246,0.12)">📊</div><div class="stat-info"><div class="num">7</div><div class="lbl">Total Diagram</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.12)">🧩</div><div class="stat-info"><div class="num">9</div><div class="lbl">Model Eloquent</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(139,92,246,0.12)">👥</div><div class="stat-info"><div class="num">8</div><div class="lbl">Peran Pengguna</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(249,115,22,0.12)">🔄</div><div class="stat-info"><div class="num">6</div><div class="lbl">Status Dokumen</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.12)">🗄️</div><div class="stat-info"><div class="num">9</div><div class="lbl">Data Store DFD</div></div></div>
+    </div>
+
+    <nav class="tab-nav" id="tabNav">
+      <a class="tab-btn active" href="#uml-class"><span>🔷</span> UML Class <span class="num">01</span></a>
+      <a class="tab-btn" href="#sequence"><span>🔄</span> Sequence <span class="num">02</span></a>
+      <a class="tab-btn" href="#state"><span>🔁</span> State <span class="num">03</span></a>
+      <a class="tab-btn" href="#erd"><span>📊</span> ERD <span class="num">04</span></a>
+      <a class="tab-btn" href="#dfd-0"><span>🗺️</span> DFD Level 0 <span class="num">05</span></a>
+      <a class="tab-btn" href="#dfd-1"><span>🔍</span> DFD Level 1 <span class="num">06</span></a>
+      <a class="tab-btn" href="#roles"><span>👥</span> Role &amp; Akses <span class="num">07</span></a>
+    </nav>
+  </header>
+
+  <!-- 1. UML Class -->
+  <section class="diagram-section" id="uml-class">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(59,130,246,0.15);color:#3b82f6;">01</div>
+      <div class="section-meta">
+        <h2>UML Class Diagram</h2>
+        <p>Seluruh model Eloquent, atribut dari migrasi, konstanta status, dan relasi antar entitas.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">uml-class-diagram.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-uml',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-uml"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+      <div class="legend-strip">
+        <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span>Model Eloquent</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Relasi HasMany / BelongsTo</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>Peran (Role)</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2. Sequence -->
+  <section class="diagram-section" id="sequence">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(139,92,246,0.15);color:#8b5cf6;">02</div>
+      <div class="section-meta">
+        <h2>Sequence Diagram — Alur Verifikasi Dokumen BLUD</h2>
+        <p>5 fase interaksi: Pengajuan PPTK → Verifikasi → Pengesahan PPK → Pembayaran Bendahara → Pengarsipan.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">sequence-diagram.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-seq',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-seq"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+      <div class="legend-strip">
+        <div class="legend-item"><span class="legend-dot" style="background:#1e4a70;border:1px solid #3b82f6"></span>Fase Pengajuan</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#145032;border:1px solid #10b981"></span>Fase Verifikasi</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4a1a4a;border:1px solid #8b5cf6"></span>Fase Pengesahan</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#503c14;border:1px solid #f97316"></span>Fase Pembayaran</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#144646;border:1px solid #38bdf8"></span>Fase Pengarsipan</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3. State -->
+  <section class="diagram-section" id="state">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(249,115,22,0.15);color:#f97316;">03</div>
+      <div class="section-meta">
+        <h2>State Diagram — Status Dokumen Pengeluaran</h2>
+        <p>Transisi status sesuai konstanta <code>ALL_STATUSES</code> di <code>DokumenPengeluaran.php</code>.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">state-diagram.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-state',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-state"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4. ERD -->
+  <section class="diagram-section" id="erd">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(16,185,129,0.15);color:#10b981;">04</div>
+      <div class="section-meta">
+        <h2>Entity Relationship Diagram (ERD)</h2>
+        <p>Struktur tabel dan seluruh foreign key persis sesuai file migrasi database.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">erd.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-erd',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-erd"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5. DFD Level 0 -->
+  <section class="diagram-section" id="dfd-0">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(56,189,248,0.15);color:#38bdf8;">05</div>
+      <div class="section-meta">
+        <h2>DFD Level 0 — Context Diagram</h2>
+        <p>Sistem sebagai satu proses utama dengan 5 entitas eksternal dan seluruh aliran data masuk/keluar.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">dfd-level-0.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-dfd0',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-dfd0"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+      <div class="legend-strip">
+        <div class="legend-item"><span class="legend-dot" style="background:#064e3b;border:1px solid #10b981"></span>PPTK</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4c1d95;border:1px solid #8b5cf6"></span>Verifikator</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#7c2d12;border:1px solid #f97316"></span>PPK</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#1e3a5f;border:1px solid #60a5fa"></span>Bendahara</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#374151;border:1px solid #9ca3af"></span>Admin</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#1e3a5f;border:1px solid #3b82f6"></span>Sistem Utama</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6. DFD Level 1 -->
+  <section class="diagram-section" id="dfd-1">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(245,158,11,0.15);color:#f59e0b;">06</div>
+      <div class="section-meta">
+        <h2>DFD Level 1 — Decomposition Diagram</h2>
+        <p>8 sub-proses (P1–P8) dengan 9 data store (D1–D9) dan aliran data lengkap antar semua komponen.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">dfd-level-1.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-dfd1',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-dfd1"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+      <div class="legend-strip">
+        <div class="legend-item"><span class="legend-dot" style="background:#1e3a5f;border:1px solid #3b82f6"></span>P1 Pengajuan</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4c1d95;border:1px solid #8b5cf6"></span>P2 Verifikasi</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#7c2d12;border:1px solid #f97316"></span>P3 Pengesahan</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#064e3b;border:1px solid #10b981"></span>P4 Pembayaran</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#78350f;border:1px solid #f59e0b"></span>P6 Audit Trail</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#0f172a;border:1px solid #475569"></span>Data Store</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Roles & Permissions -->
+  <div class="divider"></div>
+  <section class="diagram-section" id="roles">
+    <div class="section-header">
+      <div class="section-number" style="background:rgba(139,92,246,0.15);color:#8b5cf6;">07</div>
+      <div class="section-meta">
+        <h2>Role &amp; Permission Matrix</h2>
+        <p>8 peran yang terdaftar di <code>DatabaseSeeder.php</code> beserta hak akses masing-masing ke resource dan widget Filament.</p>
+      </div>
+    </div>
+    <div class="diagram-card">
+      <div class="card-toolbar">
+        <div class="toolbar-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        <span class="toolbar-label">role-permission-matrix.mmd</span>
+        <button class="btn-copy" onclick="copyDiagram('src-roles',this)">📋 Salin Kode</button>
+      </div>
+      <div class="mermaid-wrap"><div id="render-roles"><div class="loading-text"><span class="spinner"></span>Merender diagram...</div></div></div>
+      <div class="legend-strip">
+        <div class="legend-item"><span class="legend-dot" style="background:#1e3a5f;border:1px solid #3b82f6"></span>super_admin</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#374151;border:1px solid #9ca3af"></span>admin</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#064e3b;border:1px solid #10b981"></span>pptk</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4c1d95;border:1px solid #8b5cf6"></span>verifikator</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#7c2d12;border:1px solid #f97316"></span>ppk</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#1e3a5f;border:1px solid #60a5fa"></span>bendahara</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#78350f;border:1px solid #f59e0b"></span>manajemen</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#1f2937;border:1px solid #6b7280"></span>rekanan</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>
+      Dirender dengan <a href="https://mermaid.js.org" target="_blank" rel="noopener">Mermaid.js v11</a>
+      &nbsp;·&nbsp; Sistem Verifikasi BLUD — Laravel 12 + Filament v3
+    </p>
+  </footer>
+
+</div>
+
+<!-- Mermaid loaded AFTER DOM is ready -->
+<script id="src-roles" type="text/x-mermaid">
+flowchart LR
+  subgraph SYS ["Sistem Verifikasi BLUD — Role & Akses"]
+    direction TB
+
+    subgraph SA ["👑 super_admin"]
+      SA1(["Semua resource\n+ Semua widget\n+ Kelola permission"])
+    end
+
+    subgraph ADM ["🛠️ admin"]
+      ADM1(["Semua resource\n+ Semua widget"])
+    end
+
+    subgraph PPTK ["📝 pptk"]
+      PPTK1(["ViewAny DokumenPengeluaran"])
+      PPTK2(["View DokumenPengeluaran"])
+      PPTK3(["Create DokumenPengeluaran"])
+      PPTK4(["Update DokumenPengeluaran"])
+      PPTK5(["View StatsOverviewWidget"])
+      PPTK6(["View DokumenChart"])
+    end
+
+    subgraph VRK ["🔍 verifikator"]
+      VRK1(["ViewAny DokumenPengeluaran"])
+      VRK2(["View DokumenPengeluaran"])
+      VRK3(["Update DokumenPengeluaran"])
+      VRK4(["View StatsOverviewWidget"])
+      VRK5(["View DokumenChart"])
+      VRK6(["View WaktuVerifikasiChart"])
+    end
+
+    subgraph PPK ["✅ ppk"]
+      PPK1(["ViewAny DokumenPengeluaran"])
+      PPK2(["View DokumenPengeluaran"])
+      PPK3(["Update DokumenPengeluaran"])
+      PPK4(["View StatsOverviewWidget"])
+    end
+
+    subgraph BND ["💰 bendahara"]
+      BND1(["ViewAny DokumenPengeluaran"])
+      BND2(["View DokumenPengeluaran"])
+      BND3(["Update DokumenPengeluaran"])
+      BND4(["View StatsOverviewWidget"])
+      BND5(["View PengeluaranChart"])
+    end
+
+    subgraph MNJ ["📈 manajemen"]
+      MNJ1(["ViewAny DokumenPengeluaran"])
+      MNJ2(["View DokumenPengeluaran"])
+      MNJ3(["ViewAny AuditTrail"])
+      MNJ4(["View AuditTrail"])
+      MNJ5(["View StatsOverviewWidget"])
+      MNJ6(["View DokumenChart"])
+      MNJ7(["View PengeluaranChart"])
+      MNJ8(["View KoreksiPerBidangChart"])
+      MNJ9(["View WaktuVerifikasiChart"])
+    end
+
+    subgraph RKN ["🤝 rekanan"]
+      RKN1(["ViewAny DokumenPengeluaran"])
+      RKN2(["View DokumenPengeluaran"])
+    end
+  end
+
+  style SA   fill:#1e3a5f,stroke:#3b82f6,color:#fff
+  style ADM  fill:#374151,stroke:#9ca3af,color:#fff
+  style PPTK fill:#064e3b,stroke:#10b981,color:#fff
+  style VRK  fill:#4c1d95,stroke:#8b5cf6,color:#fff
+  style PPK  fill:#7c2d12,stroke:#f97316,color:#fff
+  style BND  fill:#1e3a5f,stroke:#60a5fa,color:#fff
+  style MNJ  fill:#78350f,stroke:#f59e0b,color:#fff
+  style RKN  fill:#1f2937,stroke:#6b7280,color:#fff
+  style SYS  fill:#0f172a,stroke:#334155,color:#f1f5f9
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+// ── Theme State & Persistence ─────────────────────────
+let currentTheme = localStorage.getItem('blud_diagram_theme') || 'dark';
+document.documentElement.setAttribute('data-theme', currentTheme);
+
+const diagrams = [
+  { srcId: 'src-uml',   renderId: 'render-uml'   },
+  { srcId: 'src-seq',   renderId: 'render-seq'   },
+  { srcId: 'src-state', renderId: 'render-state' },
+  { srcId: 'src-erd',   renderId: 'render-erd'   },
+  { srcId: 'src-dfd0',  renderId: 'render-dfd0'  },
+  { srcId: 'src-dfd1',  renderId: 'render-dfd1'  },
+  { srcId: 'src-roles', renderId: 'render-roles' },
+];
+
+function getMermaidConfig(isLight) {
+  if (isLight) {
+    return {
+      startOnLoad: false,
+      theme: 'default',
+      darkMode: false,
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: 13,
+      logLevel: 'error',
+      themeVariables: {
+        darkMode: false,
+        background:          '#ffffff',
+        primaryColor:        '#eff6ff',
+        primaryTextColor:    '#0f172a',
+        primaryBorderColor:  '#2563eb',
+        lineColor:           '#64748b',
+        secondaryColor:      '#f8fafc',
+        tertiaryColor:       '#ffffff',
+        edgeLabelBackground: '#f1f5f9',
+        actorBkg:            '#f8fafc',
+        actorBorder:         '#cbd5e1',
+        actorTextColor:      '#0f172a',
+        actorLineColor:      '#94a3b8',
+        signalColor:         '#475569',
+        signalTextColor:     '#0f172a',
+        labelBoxBkgColor:    '#f8fafc',
+        labelBoxBorderColor: '#cbd5e1',
+        labelTextColor:      '#0f172a',
+        loopTextColor:       '#475569',
+        noteBorderColor:     '#cbd5e1',
+        noteBkgColor:        '#f1f5f9',
+        noteTextColor:       '#0f172a',
+      },
+      sequence: { diagramMarginX: 24, diagramMarginY: 24, actorMargin: 60, width: 160, height: 50 },
+      er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100, minEntityHeight: 75, entityPadding: 15 },
+    };
+  }
+  return {
+    startOnLoad: false,
+    theme: 'dark',
+    darkMode: true,
+    fontFamily: "'Inter', system-ui, sans-serif",
+    fontSize: 13,
+    logLevel: 'error',
+    themeVariables: {
+      darkMode: true,
+      background:          '#0f172a',
+      primaryColor:        '#1e3a5f',
+      primaryTextColor:    '#f1f5f9',
+      primaryBorderColor:  '#3b82f6',
+      lineColor:           '#475569',
+      secondaryColor:      '#1e293b',
+      tertiaryColor:       '#0f172a',
+      edgeLabelBackground: '#1e293b',
+      actorBkg:            '#1e293b',
+      actorBorder:         '#475569',
+      actorTextColor:      '#f1f5f9',
+      actorLineColor:      '#475569',
+      signalColor:         '#94a3b8',
+      signalTextColor:     '#f1f5f9',
+      labelBoxBkgColor:    '#1e293b',
+      labelBoxBorderColor: '#475569',
+      labelTextColor:      '#f1f5f9',
+      loopTextColor:       '#94a3b8',
+      noteBorderColor:     '#475569',
+      noteBkgColor:        '#1e293b',
+      noteTextColor:       '#f1f5f9',
+    },
+    sequence: { diagramMarginX: 24, diagramMarginY: 24, actorMargin: 60, width: 160, height: 50 },
+    er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100, minEntityHeight: 75, entityPadding: 15 },
+  };
+}
+
+let renderSeqCount = 0;
+async function renderAllDiagrams() {
+  const isLight = currentTheme === 'light';
+  mermaid.initialize(getMermaidConfig(isLight));
+
+  for (const { srcId, renderId } of diagrams) {
+    const srcEl = document.getElementById(srcId);
+    const renderEl = document.getElementById(renderId);
+    if (!srcEl || !renderEl) continue;
+
+    const definition = srcEl.textContent.trim();
+    try {
+      renderSeqCount++;
+      const id = 'mermaid-' + renderId + '-' + renderSeqCount;
+      const { svg } = await mermaid.render(id, definition);
+      renderEl.innerHTML = svg;
+    } catch (err) {
+      renderEl.innerHTML = `<div style="color:#ef4444;font-size:12px;font-family:monospace;padding:16px;background:var(--bg-card);border-radius:8px;border:1px solid #ef4444;">
+        <strong>Error rendering diagram:</strong><br><pre style="white-space:pre-wrap;margin-top:8px">${err.message}</pre>
+      </div>`;
+    }
+  }
+}
+
+async function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  localStorage.setItem('blud_diagram_theme', currentTheme);
+  await renderAllDiagrams();
+}
+
+(async () => {
+  await renderAllDiagrams();
+
+  // ── Active tab on scroll ─────────────────────────────
+  const sections = document.querySelectorAll('.diagram-section');
+  const tabs = document.querySelectorAll('.tab-btn');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        tabs.forEach(t => t.classList.remove('active'));
+        const m = document.querySelector(`.tab-btn[href="#${e.target.id}"]`);
+        if (m) m.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => io.observe(s));
+})();
+
+// ── Copy source code ────────────────────────────────
+async function copyDiagram(srcId, btn) {
+  const el = document.getElementById(srcId);
+  if (!el) return;
+  const text = el.textContent.trim();
+  try {
+    await navigator.clipboard.writeText(text);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ Tersalin!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  } catch {
+    prompt('Salin kode di bawah ini:', text);
+  }
+}
+</script>
+</body>
+</html>

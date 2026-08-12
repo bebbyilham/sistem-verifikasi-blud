@@ -13,6 +13,11 @@ class DokumenChart extends ChartWidget
     protected ?string $heading = 'Pengajuan Dokumen';
     protected static ?int $sort = 3;
 
+    public static function canView(): bool
+    {
+        return auth()->user()->hasAnyRole(['admin', 'super_admin', 'manajemen', 'pptk', 'verifikator']);
+    }
+
     protected function getData(): array
     {
         $days = [];

@@ -307,6 +307,7 @@ class DokumenPengeluaranResource extends Resource
     {
         return [
             'index' => ListDokumenPengeluarans::route('/'),
+            'edit' => EditDokumenPengeluaran::route('/{record}/edit'),
             'view' => \App\Filament\Resources\DokumenPengeluarans\Pages\ViewDokumenPengeluaran::route('/{record}'),
         ];
     }
@@ -319,7 +320,16 @@ class DokumenPengeluaranResource extends Resource
         if ($user->hasRole('pptk')) {
             $query->where('pptk_id', $user->id);
         }
-        // Admin, Super Admin, Verifikator, PPK, Bendahara, Manajemen, Rekanan
+
+        // Rekanan hanya melihat dokumen yang sudah dibayar/diarsipkan (read-only view)
+        if ($user->hasRole('rekanan')) {
+            $query->whereIn('status', [
+                DokumenPengeluaran::STATUS_DIBAYAR,
+                DokumenPengeluaran::STATUS_DIARSIPKAN,
+            ]);
+        }
+
+        // Admin, Super Admin, Verifikator, PPK, Bendahara, Manajemen
         // melihat seluruh dokumen, di mana filter status ditangani oleh Tab & Table Filter.
 
         return $query;

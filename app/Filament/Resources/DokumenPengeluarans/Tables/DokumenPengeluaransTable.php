@@ -95,9 +95,14 @@ class DokumenPengeluaransTable
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Tutup')
                     ->modalContent(fn (DokumenPengeluaran $record) => static::renderLampiranModal($record)),
-                \Filament\Actions\ViewAction::make()->iconButton(),
-                EditAction::make()
+                \Filament\Actions\ViewAction::make()
+                    ->label('Lihat Detail')
                     ->iconButton()
+                    ->tooltip('Lihat Detail Dokumen'),
+                EditAction::make()
+                    ->label('Edit Dokumen')
+                    ->iconButton()
+                    ->tooltip('Edit / Perbaiki Dokumen')
                     ->visible(fn (DokumenPengeluaran $record) => auth()->user()->hasRole('pptk') && in_array($record->status, [DokumenPengeluaran::STATUS_DIAJUKAN, DokumenPengeluaran::STATUS_DIKEMBALIKAN])),
 
                 // === AKSI PPTK (Kirim Ulang Dokumen Dikembalikan) ===
@@ -183,7 +188,7 @@ class DokumenPengeluaransTable
 
                 Action::make('verifikasi_kembalikan')
                     ->label('Kembalikan')
-                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->iconButton()
                     ->tooltip('Kembalikan Dokumen ke PPTK (Revisi)')

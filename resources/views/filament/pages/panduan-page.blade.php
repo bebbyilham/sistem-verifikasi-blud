@@ -123,6 +123,260 @@
                     </div>
                 </div>
 
+                <!-- Alur Notifikasi Sistem -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 17px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px; margin: 0 0 16px;">
+                        <span style="font-size: 20px;">🔔</span>
+                        <span>Alur Notifikasi Otomatis Sistem</span>
+                    </h3>
+
+                    <!-- Info Banner -->
+                    <div style="background: rgba(79, 70, 229, 0.06); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px;">
+                        <span style="font-size: 16px; margin-top: 1px;">ℹ️</span>
+                        <p style="font-size: 12.5px; color: #4338ca; line-height: 1.6; margin: 0;">
+                            Setiap perubahan status dokumen akan memicu <strong>notifikasi otomatis</strong> ke pihak terkait melalui ikon 🔔 Lonceng di pojok kanan atas. Berikut adalah peta lengkap alur notifikasi pada setiap tahap siklus dokumen.
+                        </p>
+                    </div>
+
+                    <!-- Flowchart Visual -->
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow-x: auto;">
+
+                        <!-- Row 1: PPTK Submit -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 24px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(37,99,235,0.3);">
+                                <span style="font-size: 18px;">📝</span>
+                                <span>PPTK membuat dokumen baru</span>
+                            </div>
+
+                            <!-- Arrow down -->
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                <div style="width: 2px; height: 16px; background: #cbd5e1;"></div>
+                                <div style="width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #cbd5e1;"></div>
+                            </div>
+
+                            <!-- Notif 1 -->
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; font-size: 12.5px; color: #92400e;">
+                                <span style="font-size: 15px;">🔔</span>
+                                <span>Notifikasi dikirim ke <strong style="color: #9333ea;">Verifikator</strong> — <em>"Dokumen baru diajukan, menunggu verifikasi"</em></span>
+                            </div>
+
+                            <!-- Arrow down -->
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                <div style="width: 2px; height: 16px; background: #cbd5e1;"></div>
+                                <div style="width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #cbd5e1;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Verifikator Decision -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 24px; background: linear-gradient(135deg, #9333ea, #7c3aed); border-radius: 12px; color: #ffffff; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(147,51,234,0.3);">
+                                <span style="font-size: 18px;">🔍</span>
+                                <span>Verifikator memeriksa dokumen</span>
+                            </div>
+
+                            <!-- Branch Arrow -->
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 6px 0;">
+                                <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                            </div>
+
+                            <!-- Two Branches -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 720px;">
+
+                                <!-- Branch LEFT: Dikembalikan -->
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                    <div style="padding: 10px 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; text-align: center;">
+                                        <div style="font-weight: 700; font-size: 12.5px; color: #dc2626; margin-bottom: 4px;">❌ Dikembalikan</div>
+                                        <div style="font-size: 11px; color: #991b1b;">Ada kesalahan / tidak lengkap</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #fca5a5;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #fca5a5;"></div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(239, 68, 68, 0.06); border: 1px dashed rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 11.5px; color: #991b1b; text-align: center;">
+                                        <span>🔔</span>
+                                        <span>→ <strong>PPTK</strong>: <em>"Dokumen dikembalikan untuk revisi"</em></span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #fca5a5;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #fca5a5;"></div>
+                                    </div>
+                                    <div style="padding: 8px 14px; background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; text-align: center;">
+                                        <div style="font-size: 11.5px; color: #1e40af;">PPTK perbaiki & ajukan ulang</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #93c5fd;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #93c5fd;"></div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(59, 130, 246, 0.06); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 8px; font-size: 11.5px; color: #1e40af; text-align: center;">
+                                        <span>🔔</span>
+                                        <span>→ <strong>Verifikator</strong>: <em>"Dokumen diajukan ulang"</em></span>
+                                    </div>
+                                    <div style="margin-top: 8px; padding: 6px 10px; background: #f8fafc; border-radius: 6px; font-size: 10.5px; color: #94a3b8; text-align: center;">
+                                        ↩ Kembali ke proses verifikasi
+                                    </div>
+                                </div>
+
+                                <!-- Branch RIGHT: Lolos -->
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                    <div style="padding: 10px 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; text-align: center;">
+                                        <div style="font-weight: 700; font-size: 12.5px; color: #059669; margin-bottom: 4px;">✅ Lolos Verifikasi</div>
+                                        <div style="font-size: 11px; color: #065f46;">Dokumen valid & lengkap</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #6ee7b7;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #6ee7b7;"></div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+                                        <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(16, 185, 129, 0.06); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 8px; font-size: 11.5px; color: #065f46;">
+                                            <span>🔔</span>
+                                            <span>→ <strong>PPTK</strong>: <em>"Dokumen lolos verifikasi"</em></span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(249, 115, 22, 0.06); border: 1px dashed rgba(249, 115, 22, 0.3); border-radius: 8px; font-size: 11.5px; color: #9a3412;">
+                                            <span>🔔</span>
+                                            <span>→ <strong>PPK</strong>: <em>"Dokumen menunggu pengesahan"</em></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Arrow -->
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #cbd5e1;"></div>
+                                    </div>
+
+                                    <!-- PPK Sahkan -->
+                                    <div style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: linear-gradient(135deg, #ea580c, #f97316); border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 12.5px; box-shadow: 0 3px 8px rgba(234,88,12,0.25); width: fit-content; align-self: center;">
+                                        <span style="font-size: 15px;">✅</span>
+                                        <span>PPK mengesahkan</span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #cbd5e1;"></div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+                                        <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(16, 185, 129, 0.06); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 8px; font-size: 11.5px; color: #065f46;">
+                                            <span>🔔</span>
+                                            <span>→ <strong>PPTK</strong>: <em>"Dokumen telah disahkan"</em></span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(59, 130, 246, 0.06); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 8px; font-size: 11.5px; color: #1e40af;">
+                                            <span>🔔</span>
+                                            <span>→ <strong>Bendahara</strong>: <em>"Dokumen menunggu pembayaran"</em></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Arrow -->
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #cbd5e1;"></div>
+                                    </div>
+
+                                    <!-- Bendahara Bayar -->
+                                    <div style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 12.5px; box-shadow: 0 3px 8px rgba(5,150,105,0.25); width: fit-content; align-self: center;">
+                                        <span style="font-size: 15px;">💰</span>
+                                        <span>Bendahara memproses bayar</span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #cbd5e1;"></div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(16, 185, 129, 0.06); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 8px; font-size: 11.5px; color: #065f46;">
+                                        <span>🔔</span>
+                                        <span>→ <strong>PPTK</strong>: <em>"Dana telah dicairkan"</em></span>
+                                    </div>
+
+                                    <!-- Arrow -->
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #cbd5e1;"></div>
+                                    </div>
+
+                                    <!-- Arsipkan -->
+                                    <div style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: linear-gradient(135deg, #475569, #64748b); border-radius: 10px; color: #ffffff; font-weight: 700; font-size: 12.5px; box-shadow: 0 3px 8px rgba(71,85,105,0.25); width: fit-content; align-self: center;">
+                                        <span style="font-size: 15px;">🗄️</span>
+                                        <span>Bendahara arsipkan</span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0;">
+                                        <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
+                                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #cbd5e1;"></div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(100, 116, 139, 0.08); border: 1px dashed rgba(100, 116, 139, 0.3); border-radius: 8px; font-size: 11.5px; color: #334155;">
+                                        <span>🔔</span>
+                                        <span>→ <strong>PPTK</strong>: <em>"Dokumen telah diarsipkan"</em></span>
+                                    </div>
+
+                                    <!-- Final -->
+                                    <div style="margin-top: 10px; padding: 8px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(100, 116, 139, 0.08)); border: 1px solid #d1d5db; border-radius: 8px; text-align: center;">
+                                        <span style="font-size: 12px; font-weight: 700; color: #059669;">✅ Proses Selesai</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Tabel Notifikasi -->
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-top: 16px;">
+                        <div style="padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                            <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                                <span>📋</span> Ringkasan Tabel Notifikasi
+                            </h4>
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; border-bottom: 1px solid #e2e8f0;">
+                                    <th style="padding: 10px 16px; text-align: left; font-weight: 700; color: #374151; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Kejadian</th>
+                                    <th style="padding: 10px 16px; text-align: left; font-weight: 700; color: #374151; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Pengirim</th>
+                                    <th style="padding: 10px 16px; text-align: left; font-weight: 700; color: #374151; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Penerima 🔔</th>
+                                    <th style="padding: 10px 16px; text-align: left; font-weight: 700; color: #374151; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Isi Pesan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 10px 16px; color: #334155;">Dokumen baru diajukan</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(147,51,234,0.12); color: #9333ea;">Verifikator</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dokumen xxx telah diajukan, menunggu verifikasi</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 10px 16px; color: #334155;">Dokumen diajukan ulang</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(147,51,234,0.12); color: #9333ea;">Verifikator</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dokumen xxx diperbaiki dan diajukan ulang</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 10px 16px; color: #334155;">Verifikasi lolos</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(147,51,234,0.12); color: #9333ea;">Verifikator</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span> + <span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(249,115,22,0.12); color: #ea580c;">PPK</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dokumen lolos verifikasi, menunggu pengesahan</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 10px 16px; color: #334155;">Verifikasi dikembalikan</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(147,51,234,0.12); color: #9333ea;">Verifikator</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dokumen dikembalikan untuk revisi</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 10px 16px; color: #334155;">Pengesahan PPK</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(249,115,22,0.12); color: #ea580c;">PPK</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span> + <span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(59,130,246,0.12); color: #2563eb;">Bendahara</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dokumen disahkan, menunggu pembayaran</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 10px 16px; color: #334155;">Pembayaran / Pencairan</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(59,130,246,0.12); color: #2563eb;">Bendahara</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dana telah dicairkan</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 16px; color: #334155;">Pengarsipan</td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(59,130,246,0.12); color: #2563eb;">Bendahara</span></td>
+                                    <td style="padding: 10px 16px;"><span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669;">PPTK</span></td>
+                                    <td style="padding: 10px 16px; color: #64748b; font-style: italic;">Dokumen telah diarsipkan, proses selesai</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Panduan Berdasarkan Peran (Role Guides) -->
                 <div style="margin-bottom: 32px;">
                     <h3 style="font-size: 17px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px; margin: 0 0 16px;">

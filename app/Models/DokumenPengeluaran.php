@@ -40,6 +40,11 @@ class DokumenPengeluaran extends Model
         });
 
         static::created(function ($model) {
+            // Hanya kirim notifikasi jika ada user yang login (hindari trigger saat seeder/tinker)
+            if (!auth()->check()) {
+                return;
+            }
+
             $verifikators = User::role('verifikator')->get();
 
             if ($verifikators->isNotEmpty()) {

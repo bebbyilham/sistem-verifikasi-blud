@@ -8,6 +8,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -72,6 +73,28 @@ class AuditTrailResource extends Resource
                         'pengesahans' => 'Pengesahan',
                         'pembayarans' => 'Pembayaran',
                     ]),
+                Filter::make('rentang_waktu')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('dari_tanggal')
+                            ->label('Dari Tanggal'),
+                        \Filament\Forms\Components\DatePicker::make('sampai_tanggal')
+                            ->label('Sampai Tanggal'),
+                    ])
+                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data): \Illuminate\Database\Eloquent\Builder {
+                        return $query
+                            ->when($data['dari_tanggal'] ?? null, fn ($q, $date) => $q->whereDate('waktu', '>=', $date))
+                            ->when($data['sampai_tanggal'] ?? null, fn ($q, $date) => $q->whereDate('waktu', '<=', $date));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['dari_tanggal'] ?? null) {
+                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Dari: ' . \Carbon\Carbon::parse($data['dari_tanggal'])->format('d/m/Y'));
+                        }
+                        if ($data['sampai_tanggal'] ?? null) {
+                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Sampai: ' . \Carbon\Carbon::parse($data['sampai_tanggal'])->format('d/m/Y'));
+                        }
+                        return $indicators;
+                    }),
             ])
             ->recordActions([])
             ->bulkActions([]);

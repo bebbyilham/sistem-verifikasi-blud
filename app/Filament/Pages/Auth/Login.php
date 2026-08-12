@@ -4,10 +4,40 @@ namespace App\Filament\Pages\Auth;
 
 use App\Models\DokumenPengeluaran;
 use Filament\Auth\Pages\Login as BaseLogin;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 
 class Login extends BaseLogin
 {
     protected string $view = 'filament.pages.auth.login';
+
+    protected function getEmailFormComponent(): Component
+    {
+        return TextInput::make('email')
+            ->label('Alamat email')
+            ->email()
+            ->required()
+            ->autocomplete()
+            ->autofocus()
+            ->extraInputAttributes(['tabindex' => 1]);
+    }
+
+    protected function getPasswordFormComponent(): Component
+    {
+        return TextInput::make('password')
+            ->label('Kata sandi')
+            ->password()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->required()
+            ->extraInputAttributes(['tabindex' => 2]);
+    }
+
+    protected function getRememberFormComponent(): Component
+    {
+        return Checkbox::make('remember')
+            ->label('Ingat saya');
+    }
 
     public function getRecentDocuments()
     {

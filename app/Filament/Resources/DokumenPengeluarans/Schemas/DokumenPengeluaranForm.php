@@ -42,7 +42,7 @@ class DokumenPengeluaranForm
                     ->label('Nominal Pengajuan')
                     ->required()
                     ->prefix('Rp')
-                    ->mask(RawJs::make('$money($input, ",", ".", 0)'))
+                    ->mask(RawJs::make('$money($input, ".", ",", 0)'))
                     ->stripCharacters('.')
                     ->formatStateUsing(fn ($state) => filled($state) ? number_format((float) $state, 0, ',', '.') : null)
                     ->dehydrateStateUsing(fn ($state) => filled($state) ? (float) str_replace(['.', ','], ['', '.'], (string) $state) : null),

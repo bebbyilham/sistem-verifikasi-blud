@@ -1492,11 +1492,39 @@ div[x-ref="notificationsContainer"]::-webkit-scrollbar-thumb {
     color: #ffffff !important;
 }
 
+/* ============================================================
+   DARK MODE OVERRIDES FOR SPLIT LOGIN FORM (Always White Panel & Slate Text)
+   ============================================================ */
+.dark .split-login-container,
+.dark .split-login-left {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
 
+.dark .split-login-left label,
+.dark .split-login-left .fi-fo-field-wrp-label,
+.dark .split-login-left .fi-fo-field-label-content,
+.dark .split-login-left span,
+.dark .split-login-left p {
+    color: #1e293b !important;
+}
 
+.dark .split-login-left .fi-input-wrp {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
 
+.dark .split-login-left .fi-input {
+    color: #0f172a !important;
+}
 
+.dark .split-login-left .fi-checkbox-input {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+}
 
-
-
-
+.dark .split-login-left .fi-icon-btn,
+.dark .split-login-left button svg {
+    color: #64748b !important;
+}

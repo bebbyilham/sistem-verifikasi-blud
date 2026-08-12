@@ -50,37 +50,12 @@
 
             <!-- Dashboard Application Window Mockup (Exact 1:1 Match to App Dashboard) -->
             <div class="app-dashboard-window">
-                <!-- Browser Window Topbar -->
-                <div class="app-window-bar">
-                    <div class="app-window-dots">
-                        <span class="dot-red"></span>
-                        <span class="dot-yellow"></span>
-                        <span class="dot-green"></span>
-                    </div>
-                    <div class="app-window-url">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        <span>sistem-verifikasi-blud/admin</span>
-                    </div>
-                </div>
-
                 <!-- App Dashboard Content Preview (Exact 1:1 Replica of Application Dashboard) -->
                 <div class="app-window-body">
                     <div class="app-dasbor-title">Dasbor</div>
 
-                    <!-- Filter Tanggal Bar Mockup -->
-                    <div class="app-filter-bar">
-                        <div class="app-filter-title">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-                            <span>Filter Periode Tanggal</span>
-                        </div>
-                        <div class="app-filter-inputs">
-                            <div class="app-filter-input"><span>Mulai:</span> <strong>01/08/2026</strong></div>
-                            <div class="app-filter-input"><span>Selesai:</span> <strong>10/08/2026</strong></div>
-                        </div>
-                    </div>
-
                     <!-- 1. Pitch.io Welcome Card Widget (Exact 1:1 Replica of welcome-widget.blade.php) -->
-                    <div class="pitch-welcome-card mini-welcome">
+                    <div class="pitch-welcome-card mini-welcome" style="margin-bottom: 14px;">
                         <div class="pitch-welcome-left">
                             <h2 class="pitch-welcome-title">
                                 Hi, Admin Keuangan
@@ -95,7 +70,29 @@
                         </div>
                     </div>
 
-                    <!-- 2. Stat Cards Grid (6 Floating White Cards) -->
+                    <!-- 2. Filter Pill Bar Mockup (Exact 1:1 Replica of Dashboard Filter Toolbar) -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; width: 100%;">
+                        <!-- Left Pill Group: Timeline / List -->
+                        <div style="display: inline-flex; align-items: center; padding: 3px; background: rgba(255, 255, 255, 0.85); border-radius: 10px; border: 1px solid rgba(226, 232, 240, 0.9); gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                            <span style="padding: 4px 12px; font-size: 11px; font-weight: 700; color: #0f172a; background: #ffffff; border-radius: 7px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">Timeline</span>
+                            <span style="padding: 4px 12px; font-size: 11px; font-weight: 500; color: #64748b;">List</span>
+                        </div>
+
+                        <!-- Right Pill Group: Period Presets -->
+                        <div style="display: inline-flex; align-items: center; padding: 3px; background: rgba(255, 255, 255, 0.85); border-radius: 10px; border: 1px solid rgba(226, 232, 240, 0.9); gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                            <span style="padding: 4px 8px; font-size: 11px; font-weight: 500; color: #64748b;">1D</span>
+                            <span style="padding: 4px 8px; font-size: 11px; font-weight: 700; color: #0f172a; background: #ffffff; border-radius: 7px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">7D</span>
+                            <span style="padding: 4px 8px; font-size: 11px; font-weight: 500; color: #64748b;">1M</span>
+                            <span style="padding: 4px 8px; font-size: 11px; font-weight: 500; color: #64748b;">3M</span>
+                            <span style="padding: 4px 8px; font-size: 11px; font-weight: 500; color: #64748b;">YTD</span>
+                            <span style="padding: 4px 6px; font-size: 11px; color: #64748b; display: inline-flex; align-items: center;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </span>
+                            <span style="padding: 4px 8px; font-size: 11px; font-weight: 500; color: #64748b;">All time</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Stat Cards Grid (6 Floating White Cards) -->
                     <div class="app-stats-grid">
                         <div class="app-stat-card">
                             <span class="app-stat-label">Total Dokumen</span>
@@ -104,7 +101,7 @@
                         </div>
                         <div class="app-stat-card">
                             <span class="app-stat-label">Menunggu Verifikasi</span>
-                            <span class="app-stat-value">1</span>
+                            <span class="app-stat-value">3</span>
                             <span class="app-stat-sub text-orange">Belum diverifikasi 🕒</span>
                         </div>
                         <div class="app-stat-card">
@@ -119,12 +116,12 @@
                         </div>
                         <div class="app-stat-card">
                             <span class="app-stat-label">Dibayar</span>
-                            <span class="app-stat-value">1</span>
+                            <span class="app-stat-value">0</span>
                             <span class="app-stat-sub text-emerald">Sudah diproses Bendahara 💲</span>
                         </div>
                         <div class="app-stat-card">
                             <span class="app-stat-label">Diarsipkan</span>
-                            <span class="app-stat-value">2</span>
+                            <span class="app-stat-value">1</span>
                             <span class="app-stat-sub text-gray">Proses selesai 🗄️</span>
                         </div>
                     </div>

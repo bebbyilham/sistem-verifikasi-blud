@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->brandName('Sistem Verifikasi BLUD')
+            ->favicon(asset('favicon.svg'))
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
@@ -72,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_END,
                 fn (): string => \Illuminate\Support\Facades\Blade::render('
+                    <link rel="icon" type="image/svg+xml" href="{{ asset("favicon.svg") }}">
                     <link rel="stylesheet" href="{{ asset("css/glassmorphism-indigo.css") }}">
                 ')
             )
